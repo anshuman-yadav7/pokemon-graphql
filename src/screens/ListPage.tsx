@@ -10,7 +10,7 @@ export const ListPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="list-page">
       <PokemonList />
 
       {id && (
