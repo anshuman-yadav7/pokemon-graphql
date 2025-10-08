@@ -1,0 +1,53 @@
+import { useMemo } from 'react';
+import { useQuery } from '@apollo/client/react';
+import gql from 'graphql-tag';
+
+export type Pokemon = {
+  id: string;
+  name: string;
+  number: string;
+  image: string;
+  types: string[];
+};
+
+export type PokemonOption = {
+  value: Pokemon['id'];
+  label: Pokemon['name'];
+};
+
+export const GET_POKEMONS = gql`
+  query pokemons($first: Int!) {
+    pokemons(first: $first) {
+      id
+      name
+      number
+      image
+      types
+    }
+  }
+`;
+
+export const useGetPokemons = () => {
+  const { data, loading, error } = useQuery<{ pokemons: Pokemon[] }>(
+    GET_POKEMONS,
+    {
+      variables: {
+        first: 151,
+      },
+    }
+  );
+
+  const pokemons: Pokemon[] = useMemo(() => data?.pokemons || [], [data]);
+
+  const pokemonOptions: PokemonOption[] = useMemo(
+    () => pokemons.map((p: Pokemon) => ({ value: p.id, label: p.name })),
+    [pokemons]
+  );
+
+  return {
+    pokemons,
+    loading,
+    error,
+    pokemonOptions,
+  };
+};
